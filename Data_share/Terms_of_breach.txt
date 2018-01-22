@@ -1,0 +1,8 @@
+Reason for breach or other issues
+1) Data authenticity : 0xeeb5fd66ea469f29fb48889db9ed63b6782ffa92bd5b128a364b25b4989df4e0 
+2) Use of Data  : 0x252251979548e9e8edef68d3aa14323c65ef01f9abdb4a773fc9de98533c6d50 
+3) Data Breach due to Safeguard : 0x4bdcd3d5665548e287a3778f23b602c27c8afeff4fbf8dbf4b188df3da97fa4c
+4) Deanonymization attempt : 0x1e9accfa270e5459d41548032f767808eaa7d57c43f82cd640dc023fa52b0280
+5) Data Breach : 0xd567f72d827ce4b7b04e2252dbd2716f731e5c3e3cc45e4cea7f645adcb49934
+6) Modification of data : 
+7) Publication objection violation : 
