@@ -1,0 +1,162 @@
+pragma solidity ^0.4.10;
+contract Document_track_Encrypted
+{
+  bytes32 owner_cont;										//owner of the contract
+	struct user_access
+	{
+		//bytes32[] addr_doc;
+		mapping (bytes32 => bool) users;							//mapping between the user and document to confirm access
+	}
+	user_access usr_struct;										//defining the user access
+	struct Document
+	{
+		bytes32 doc_id;										//unique identifier assigned by the contract :hash of  (docname,ts);
+		bytes32 owner;
+		uint last_block_ts;									//When the update was made + prevents replay of signatures
+		uint no_of_users;
+	}
+	Document[] doc;
+	mapping (bytes32=>uint) doc_index;							//mapping stores index of the document
+	mapping (address=>bytes32) doc_user;
+	address vot_cont;
+	event time_error(uint ts,uint lst_ts,uint nw);
+	event error_chg(string str,bool);
+	event user_owner(bytes32 addr);
+	event user_errors(string str);
+	modifier onlyBy(bytes32 _account)
+    {
+	   	if (sha3(msg.sender) != _account)
+	   	{
+	    	user_errors("address error!!");
+		}
+		else
+		{_;}
+	}
+	modifier checktime(uint ts,bytes32 docid)//uint last_block_ts)
+    	{
+			uint lst_ts=doc[doc_index[docid]].last_block_ts;
+        	if(ts>now || ts<=lst_ts)
+		{
+			time_error(ts,lst_ts,now);
+		}
+		else
+		{_;}
+	}
+	function Document_track_Encrypted(address addr)						//constructor
+	{
+		owner_cont=sha3(msg.sender);								//owner of the contract
+		vot_cont=addr;
+	}
+	function add_vote_cont(address addr)								//updating the voting contract
+	{
+		vot_cont=addr;
+	}
+	function changeOwner(address _newOwner,bytes32 doc_id)						//changing the ownership
+        onlyBy(doc[doc_index[doc_id]].owner)
+	{
+      	    bytes32 ownr=doc[doc_index[doc_id]].owner;                                 		 //getting the current owner
+		    
+	    	usr_struct.users[sha3(doc_id,ownr)]=false;                              		 //setting current owner = false
+	    	doc[doc_index[doc_id]].owner= bytes32(_newOwner);                                  		 //setting new owner
+	}
+	/*****************Document Addition********************************************/
+	
+	event doc_created(bytes32 doc_id,string process,bytes32 owner,string digest,uint ts,string OPM,bytes sig);
+	function adddocument(uint docu_id,string ency_digest,uint ts,bytes sig)
+	{
+		doc.length+=1;
+		uint i=doc.length-1;
+		doc[i].doc_id=sha3(now,docu_id,msg.sender);					//doc_id generated with inital seed value + now
+		doc[i].owner=sha3(msg.sender);								//hashed value of the owner
+		doc[i].last_block_ts=now;
+		doc_index[doc[i].doc_id]=i;								//setting the mapping for index of the document.
+		doc[i].no_of_users=0;
+		doc_created(doc[i].doc_id,"Document creation",doc[i].owner,ency_digest,ts,"doc_id-1-process-2-owner",sig);
+	}
+
+	/********************adding user***********************************/
+
+	event user_addition(string event_name,bytes32 artifact,string process,bytes32 agent1,bytes32 agent2,string OPM,uint ts,bytes sig);
+	function adduser(bytes32 doc_id,bytes32 usr_new,uint ts,bytes sig)
+	onlyBy(doc[doc_index[doc_id]].owner)
+	{
+	    uint i=doc_index[doc_id];
+	   	doc[i].last_block_ts=ts;
+	   //usr_struct.addr_doc.length+=1;
+		doc[i].no_of_users+=1;
+		//usr_struct.addr_doc[usr_struct.addr_doc.length-1]=sha3(doc_id,usr_new);			//adding a new user document combination
+		usr_struct.users[sha3(doc_id,usr_new)]=true;						//adding to mapping
+		user_addition("User Addition",doc_id,"grant access",doc[i].owner,usr_new,"(agent1,agent2)-1-process-2-artifact",ts,sig);	
+	}
+
+	/*******************deleting the user***********************************/
+
+	event delete_user(string event_name,bytes32 artifact,string process,bytes32 agent1,bytes32 agent2,string OPM,uint ts,bytes sig);
+	function deleteuser(bytes32 doc_id,bytes32 usr,uint ts)
+	onlyBy(doc[doc_index[doc_id]].owner)
+		{
+	   	uint i=doc_index[doc_id];
+		doc[i].last_block_ts=ts;
+		{
+			usr_struct.users[sha3(doc_id,usr)]=false;						//deleteing the user
+		}
+	}
+
+   /****************************Check Functions for user access*********************/
+
+    function user_doc_access(bytes32 doc_id,bytes32 user_addr) returns(bool t)					//checking users access to a document
+    {
+		return(usr_struct.users[sha3(doc_id,user_addr)]);
+    }
+
+    function get_usr_cnt(bytes32 doc_id) returns(uint count)
+    {
+		uint i=doc_index[doc_id];
+		uint cnt=0;
+		if(msg.sender == vot_cont)
+		{
+			cnt = doc[i].no_of_users;
+		}
+		else
+		{
+			cnt=0;
+		}
+		return(cnt);
+    }
+    function check_usr_access(bytes32 doc_id,address addr) returns(bool ans)
+    {
+        bytes32 user=sha3(addr);
+  		if(user_doc_access(doc_id,user))
+        {
+            return(true) ;
+        }
+        else
+        {
+            return(false) ;
+        }
+    }
+	
+   /*********Document Change!!***************************************/
+
+    event change(bytes32 doc_id,address agent,string encyt_text,string process,string OPM,bytes sig);
+    function document_change(bytes32 doc_id,string ency_text,address initatior,bytes sig) 		//logging document changes
+    {
+		uint i=doc_index[doc_id];
+		if(msg.sender==vot_cont)					//only voter contract can initiate the change
+		{
+			doc[i].last_block_ts=now;
+			change(doc_id,initatior,ency_text,"document_change","agent-1-process-2-artifact-3-hashes",sig);
+		}
+		else
+		{
+			error_chg("Error!!Invalid change source address!!",true);
+		}
+	    }
+	    function kill()
+	    {
+		if(sha3(msg.sender) == owner_cont )
+		{
+		 	suicide(msg.sender);
+		}
+    }
+}

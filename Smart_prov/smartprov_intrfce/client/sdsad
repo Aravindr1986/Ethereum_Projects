@@ -1,0 +1,3 @@
+db.bios.findOne({"_id" : "0xjhjkh"});
+db.Doc_tracker.insertOne({"_id" : "0x6dc8cbf0f958c5ca58e4b2e07c4e22f6f340b649a5adf24c9a3f77cae3c97331", "key" :"key","prevlink" : "https://docs.google.com/spreadsheets/d/1eKslZhGsdNtc0x-opEULkmxFV-yKNIpauxwlr8YNbZg/edit?usp=sharing"})
+zxcz

@@ -1,0 +1,81 @@
+<head>
+  <title>temp</title>
+</head>
+
+<body>
+  
+<script src="/packages/flynn_big-integer/client/BigInteger.js"></script>
+
+<div>
+  {{> signup}}
+  {{> addocs}}
+  {{> addusers}}
+  {{> initiate_change}}
+ 
+  
+</div>
+</body>
+
+<template name = "signup">
+<h1>Update credentials</h1>
+   <form>
+    <table>
+     <tr><td> Email id </td><td> <input type = "text" name = "did"></td></tr>
+     <tr><td>Ethereum account </td><td> <input type = "text" name = "addr"></td></tr>
+     <tr><td>Account password </td><td> <input type = "password" name = "passwd"></td></tr>
+     <tr><td>Key </td><td> <input type = "password" name = "Key"></td></tr>
+     <tr><td><input type = "submit" value = "SUBMIT"></td><td></td></tr>
+    </table> 
+   </form>
+</template>
+
+<template name = "addocs">
+<h1>Add Document</h1>
+   <form>
+    <table>
+     <tr><td> document id</td><td> <input type = "number" name = "did"></td></tr>
+     <tr><td>hash_value</td><td> <input type = "text" name = "txt"></td></tr>
+     <tr><td>link</td><td> <input type = "text" name = "link"></td></tr>
+     <tr><td>User account </td><td><input type = "text" name = "addr"></td></tr>
+     <tr><td><input type = "submit" value = "SUBMIT"></td><td></td></tr>
+    </table> 
+   </form>
+</template>
+<template name = "addusers">
+<h1>Add user</h1>
+   <form>
+    <table>
+     <tr><td> document id</td><td> <input type = "text" name = "did"></td></tr>
+     <tr><td>New User address</td><td><input type = "password" name = "newuser"></td></tr>
+     <tr><td>User address</td><td><input type = "text" name = "addr"></td></tr>
+     <tr><td> password</td><td> <input type = "password" name = "passwrd"></td></tr>
+     <tr><td><input type = "submit" value = "Add user!"></td><td></td></tr>
+    </table> 
+   </form>
+</template>
+<template name = "initiate_change">
+<h1>Initiate Change</h1>
+   <form>
+    <table>
+     <tr><td> document id</td><td> <input type = "text" name = "did"></td></tr>
+     <tr><td>Current_hash</td><td><input type = "text" name = "cur_hsh"></td></tr>
+     <tr><td>Prev_hash</td><td><input type = "text" name = "prv_hsh"></td></tr>
+     <tr><td>link</td><td> <input type = "text" name = "link"></td></tr>
+     <tr><td>User address</td><td><input type = "text" name = "addr"></td></tr>
+     <tr><td> password</td><td> <input type = "password" name = "passwrd"></td></tr>
+     <tr><td><input type = "submit" value = "Initate change!!"></td><td></td></tr>
+    </table> 
+   </form>
+</template>
+<template name = "vote_change">
+<h1>Vote on Change</h1>
+   <form>
+    <table>
+     <tr><td>document id</td><td> <input type = "text" name = "did"></td></tr>
+     <tr><td>vote</td><td><input type = "radio" name = "vote" value="true">yes<input type = "radio" name = "vote" value="">No</td></tr>
+     <tr><td>User address</td><td><input type = "text" name = "addr"></td></tr>
+     <tr><td> password</td><td> <input type = "password" name = "passwrd"></td></tr>
+     <tr><td><input type = "submit" value = "Register vote"></td><td></td></tr>
+    </table> 
+   </form>
+</template>
